@@ -251,12 +251,24 @@
         <!-- Part 2 Placeholder -->
         <div class="content" id="part2" style="margin-top: 40px;">
             <h2 style="font-size: 1.3rem; font-weight: bold;">Part 2: Noise Robustness</h2>
-            <p style="color: #888;">This section is for noise robustness experiments. (To be added)</p>
+            <p style="color: #888; margin-bottom: 20px;">This section demonstrates the noise robustness of different voice conversion methods.</p>
+            <div id="noise-content">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading noise robustness audio data...</p>
+                </div>
+            </div>
         </div>
         <!-- Part 3 Placeholder -->
         <div class="content" id="part3" style="margin-top: 40px;">
-            <h2 style="font-size: 1.3rem; font-weight: bold;">Part 3: Interferer Robustness</h2>
-            <p style="color: #888;">This section is for interferer robustness experiments. (To be added)</p>
+            <h2 style="font-size: 1.3rem; font-weight: bold;">Part 3: Speaker Interferer Robustness</h2>
+            <p style="color: #888; margin-bottom: 20px;">This section demonstrates the speaker interferer robustness of different voice conversion methods.</p>
+            <div id="interferer-content">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading speaker interferer robustness audio data...</p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -287,6 +299,46 @@
                 "source": "/gpfs/home/shangzengqiang/shangzengqiang/data/LibriTTS/wavs/test-clean/237/134500/237_134500_000001_000004.wav",
                 "target": "/gpfs/home/shangzengqiang/shangzengqiang/data/VCTK/wav48_silence_trimmed/p243/p243_106_mic2.flac",
                 "target_speaker": "p243"
+            }
+        ];
+
+        // Noise robustness audio data
+        const noiseData = [
+            {
+                "filename": "1089-134686-0004_1284-1180-0027.wav",
+                "description": "Sample 1: Clean vs Noisy vs Denoised"
+            },
+            {
+                "filename": "1089-134686-0024_1995-1836-0013.wav", 
+                "description": "Sample 2: Clean vs Noisy vs Denoised"
+            },
+            {
+                "filename": "1188-133604-0033_7127-75947-0027.wav",
+                "description": "Sample 3: Clean vs Noisy vs Denoised"
+            },
+            {
+                "filename": "1284-1181-0003_8463-294825-0015.wav",
+                "description": "Sample 4: Clean vs Noisy vs Denoised"
+            }
+        ];
+
+        // Speaker interferer robustness audio data
+        const interfererData = [
+            {
+                "filename": "3729-6852-0046_672-122797-0044.wav",
+                "description": "Sample 1: Anchor vs Clean vs Mix vs Separate"
+            },
+            {
+                "filename": "908-157963-0018_1320-122617-0014.wav",
+                "description": "Sample 2: Anchor vs Clean vs Mix vs Separate"
+            },
+            {
+                "filename": "61-70968-0027_4446-2273-0018.wav",
+                "description": "Sample 3: Anchor vs Clean vs Mix vs Separate"
+            },
+            {
+                "filename": "1320-122617-0027_4507-16021-0054.wav",
+                "description": "Sample 4: Anchor vs Clean vs Mix vs Separate"
             }
         ];
 
@@ -417,6 +469,90 @@
             return sampleItem;
         }
 
+        // Render noise robustness sample
+        function renderNoiseSample(sample, index) {
+            const sampleItem = document.createElement('div');
+            sampleItem.className = 'sample-item';
+            
+            const sampleHeader = document.createElement('div');
+            sampleHeader.className = 'sample-header';
+            
+            const sampleInfo = document.createElement('div');
+            sampleInfo.className = 'sample-info';
+            
+            const sampleNumber = document.createElement('span');
+            sampleNumber.className = 'sample-number';
+            sampleNumber.textContent = `Sample ${index + 1}`;
+            
+            const sampleDescription = document.createElement('span');
+            sampleDescription.className = 'target-speaker';
+            sampleDescription.textContent = sample.description;
+            
+            sampleInfo.appendChild(sampleNumber);
+            sampleInfo.appendChild(sampleDescription);
+            sampleHeader.appendChild(sampleInfo);
+            
+            const audioGrid = document.createElement('div');
+            audioGrid.className = 'audio-grid';
+            
+            // Create audio players for clean, noisy, and denoised versions
+            const cleanAudio = createAudioPlayer(`denoise/clean/${sample.filename}`, '🧹 Clean Audio');
+            const noisyAudio = createAudioPlayer(`denoise/noisy/${sample.filename}`, '🔊 Noisy Audio');
+            const denoisedAudio = createAudioPlayer(`denoise/denoise/${sample.filename}`, '✨ Denoised Audio');
+            
+            audioGrid.appendChild(noisyAudio);
+            audioGrid.appendChild(cleanAudio);
+            audioGrid.appendChild(denoisedAudio);
+            
+            sampleItem.appendChild(sampleHeader);
+            sampleItem.appendChild(audioGrid);
+            
+            return sampleItem;
+        }
+
+        // Render speaker interferer robustness sample
+        function renderInterfererSample(sample, index) {
+            const sampleItem = document.createElement('div');
+            sampleItem.className = 'sample-item';
+            
+            const sampleHeader = document.createElement('div');
+            sampleHeader.className = 'sample-header';
+            
+            const sampleInfo = document.createElement('div');
+            sampleInfo.className = 'sample-info';
+            
+            const sampleNumber = document.createElement('span');
+            sampleNumber.className = 'sample-number';
+            sampleNumber.textContent = `Sample ${index + 1}`;
+            
+            const sampleDescription = document.createElement('span');
+            sampleDescription.className = 'target-speaker';
+            sampleDescription.textContent = sample.description;
+            
+            sampleInfo.appendChild(sampleNumber);
+            sampleInfo.appendChild(sampleDescription);
+            sampleHeader.appendChild(sampleInfo);
+            
+            const audioGrid = document.createElement('div');
+            audioGrid.className = 'audio-grid';
+            
+            // Create audio players for anchor, clean, mix, and separate versions
+            const anchorAudio = createAudioPlayer(`sep-clean/anchor/${sample.filename}`, '⚓ Anchor Audio');
+            const cleanAudio = createAudioPlayer(`sep-clean/clean/${sample.filename}`, '🧹 Clean Audio');
+            const mixAudio = createAudioPlayer(`sep-clean/mix/${sample.filename}`, '🔀 Mixed Audio');
+            const separateAudio = createAudioPlayer(`sep-clean/separate/${sample.filename}`, '🎯 Separated Audio');
+            
+            audioGrid.appendChild(anchorAudio);
+            audioGrid.appendChild(cleanAudio);
+            audioGrid.appendChild(mixAudio);
+            audioGrid.appendChild(separateAudio);
+            
+            sampleItem.appendChild(sampleHeader);
+            sampleItem.appendChild(audioGrid);
+            
+            return sampleItem;
+        }
+
         // Initialize page
         function initPage() {
             const content = document.getElementById('content');
@@ -432,6 +568,36 @@
             testData.forEach((sample, index) => {
                 const sampleElement = renderSample(sample, index);
                 content.appendChild(sampleElement);
+            });
+            
+            // Initialize noise robustness section
+            initNoiseSection();
+            
+            // Initialize speaker interferer robustness section
+            initInterfererSection();
+        }
+
+        // Initialize noise robustness section
+        function initNoiseSection() {
+            const noiseContent = document.getElementById('noise-content');
+            noiseContent.innerHTML = '';
+            
+            // Render noise samples
+            noiseData.forEach((sample, index) => {
+                const sampleElement = renderNoiseSample(sample, index);
+                noiseContent.appendChild(sampleElement);
+            });
+        }
+
+        // Initialize speaker interferer robustness section
+        function initInterfererSection() {
+            const interfererContent = document.getElementById('interferer-content');
+            interfererContent.innerHTML = '';
+
+            // Render interferer samples
+            interfererData.forEach((sample, index) => {
+                const sampleElement = renderInterfererSample(sample, index);
+                interfererContent.appendChild(sampleElement);
             });
         }
 
